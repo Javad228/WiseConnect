@@ -65,7 +65,7 @@ class HomeScreen extends StatelessWidget {
             ),
             SizedBox(height: 24),
             Text(
-              'Top Specialist in your Area',
+              'Top Specialists in your Area',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
@@ -105,12 +105,12 @@ class HomeScreen extends StatelessWidget {
                 mainAxisSpacing: 8,
                 crossAxisSpacing: 8,
                 children: [
-                  ServiceIcon(label: 'Haircut', iconPath: 'assets/icons/haircut.png'),
-                  ServiceIcon(label: 'Bike Repair', iconPath: 'assets/icons/bikerepair.png'),
-                  ServiceIcon(label: 'Gym', iconPath: 'assets/icons/gym.png'),
-                  ServiceIcon(label: 'Nails', iconPath: 'assets/icons/nails.png'),
-                  ServiceIcon(label: 'Makeup', iconPath: 'assets/icons/makeup.png'),
-
+                  ServiceIcon(label: 'Haircut', iconPath: 'assets/icons/haircut.jpg'),
+                  ServiceIcon(label: 'Bike Repair', iconPath: 'assets/icons/bikerepair.jpg'),
+                  ServiceIcon(label: 'Gym', iconPath: 'assets/icons/gym.jpg'),
+                  ServiceIcon(label: 'Nails', iconPath: 'assets/icons/nails.jpg'),
+                  ServiceIcon(label: 'Makeup', iconPath: 'assets/icons/makeup.jpg'),
+                  ServiceIcon(label: 'Plumber', iconPath: 'assets/icons/plumber.jpg'),
                   // Add more services as needed
                 ],
               ),
@@ -205,7 +205,6 @@ class SpecialistCard extends StatelessWidget {
   }
 }
 
-
 class ServiceIcon extends StatelessWidget {
   final String label;
   final String iconPath;
@@ -214,12 +213,37 @@ class ServiceIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Image.asset(iconPath, height: 50, width: 50),
-        SizedBox(height: 4),
-        Text(label, style: TextStyle(fontSize: 14)),
-      ],
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12), // Rounded corners
+      ),
+      elevation: 1, // Elevation to give the card a slight shadow
+      child: Padding(
+        padding: const EdgeInsets.all(0.0), // Add some padding around the icon and label
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ClipOval(
+              child: Image.asset(
+                iconPath,
+                height: 70,
+                width: 70,
+                fit: BoxFit.cover, // Ensures the image covers the circular shape
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: const Color.fromARGB(255, 138, 138, 138),
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
