@@ -4,6 +4,8 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import 'specialist.dart';
 import 'specialist_profile_screen.dart';
 import 'messages_screen.dart';
+import 'signup_screen.dart';
+import 'login_screen.dart';
 import 'service_specialists_screen.dart'; // Import the new screen
 
 
@@ -63,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: Colors.blue, // Customize as needed
+        selectedItemColor: Colors.blue,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.message),
@@ -134,9 +136,49 @@ class SearchContent extends StatelessWidget {
           onPressed: () {},
         ),
         actions: [
-          IconButton(
+          PopupMenuButton<int>(
             icon: Icon(Icons.account_circle, color: Colors.black),
-            onPressed: () {},
+            onSelected: (value) {
+              if (value == 1) {
+                // Navigate to login screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginScreen(),
+                  ),
+                );
+              } else if (value == 2) {
+                // Navigate to signup screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SignupScreen(),
+                  ),
+                );
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 1,
+                child: Row(
+                  children: [
+                    Icon(Icons.login, color: Colors.blue),
+                    SizedBox(width: 8),
+                    Text("Login"),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 2,
+                child: Row(
+                  children: [
+                    Icon(Icons.app_registration, color: Colors.green),
+                    SizedBox(width: 8),
+                    Text("Signup"),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -349,6 +391,52 @@ final List<Specialist> allSpecialists = [
     specialization: 'Haircut',
     industry: 'Beauty Salon',
     distance: '1.27km',
+    workingHours: '10:00 AM - 22:00 PM',
+    imageUrl: 'assets/images/alexabrown.jpg',
+    bio: 'Passionate about helping businesses grow online.',
+    rating: 4.5,
+    contentUrls: ['assets/content/hairpost.jpg', 'assets/content/hairpost2.jpg'],
+    schedule: {
+      normalizeDate(DateTime.now()): [
+        TimeSlot(time: TimeOfDay(hour: 9, minute: 0), isBooked: false),
+        TimeSlot(time: TimeOfDay(hour: 10, minute: 0), isBooked: true),
+        TimeSlot(time: TimeOfDay(hour: 11, minute: 0), isBooked: false),
+      ],
+      normalizeDate(DateTime.now().add(Duration(days: 1))): [
+        TimeSlot(time: TimeOfDay(hour: 9, minute: 0), isBooked: false),
+        TimeSlot(time: TimeOfDay(hour: 10, minute: 0), isBooked: false),
+        TimeSlot(time: TimeOfDay(hour: 11, minute: 0), isBooked: true),
+      ],
+    },
+  ),
+  Specialist(
+    name: 'Charlie Holand',
+    specialization: 'Haircut',
+    industry: 'Beauty Salon',
+    distance: '1.57km',
+    workingHours: '10:00 AM - 22:00 PM',
+    imageUrl: 'assets/images/alexabrown.jpg',
+    bio: 'Passionate about helping businesses grow online.',
+    rating: 4.5,
+    contentUrls: ['assets/content/hairpost.jpg', 'assets/content/hairpost2.jpg'],
+    schedule: {
+      normalizeDate(DateTime.now()): [
+        TimeSlot(time: TimeOfDay(hour: 9, minute: 0), isBooked: false),
+        TimeSlot(time: TimeOfDay(hour: 10, minute: 0), isBooked: true),
+        TimeSlot(time: TimeOfDay(hour: 11, minute: 0), isBooked: false),
+      ],
+      normalizeDate(DateTime.now().add(Duration(days: 1))): [
+        TimeSlot(time: TimeOfDay(hour: 9, minute: 0), isBooked: false),
+        TimeSlot(time: TimeOfDay(hour: 10, minute: 0), isBooked: false),
+        TimeSlot(time: TimeOfDay(hour: 11, minute: 0), isBooked: true),
+      ],
+    },
+  ),
+  Specialist(
+    name: 'Harrison Ford',
+    specialization: 'Haircut',
+    industry: 'Beauty Salon',
+    distance: '1.1km',
     workingHours: '10:00 AM - 22:00 PM',
     imageUrl: 'assets/images/alexabrown.jpg',
     bio: 'Passionate about helping businesses grow online.',
