@@ -54,14 +54,16 @@ class _BookingPageState extends State<BookingPage> {
         scrollDirection: Axis.horizontal,
         itemCount: 14, // Show next 14 days
         itemBuilder: (context, index) {
+          // Create date normalized to midnight (00:00:00)
           DateTime date = DateTime.now().add(Duration(days: index));
-          bool hasSlots = widget.specialist.schedule.containsKey(date);
+          DateTime normalizedDate = DateTime(date.year, date.month, date.day);
+          bool hasSlots = widget.specialist.schedule.containsKey(normalizedDate);
 
           return GestureDetector(
             onTap: hasSlots
                 ? () {
                     setState(() {
-                      selectedDate = date;
+                      selectedDate = normalizedDate;
                       selectedTimeSlot = null; // Reset selected time slot
                     });
                   }
@@ -70,9 +72,7 @@ class _BookingPageState extends State<BookingPage> {
               width: 80,
               margin: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: date.day == selectedDate.day &&
-                        date.month == selectedDate.month &&
-                        date.year == selectedDate.year
+                color: normalizedDate == selectedDate
                     ? Colors.blue
                     : Colors.grey[200],
                 borderRadius: BorderRadius.circular(8),
@@ -82,7 +82,7 @@ class _BookingPageState extends State<BookingPage> {
               ),
               child: Center(
                 child: Text(
-                  '${date.day}/${date.month}',
+                  '${normalizedDate.day}/${normalizedDate.month}',
                   style: TextStyle(
                     color: hasSlots ? Colors.black : Colors.grey,
                   ),
@@ -94,6 +94,7 @@ class _BookingPageState extends State<BookingPage> {
       ),
     );
   }
+
 
   Widget _buildTimeSlots(List<TimeSlot> timeSlots) {
     if (timeSlots.isEmpty) {
@@ -171,14 +172,17 @@ class _BookingPageState extends State<BookingPage> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
-                Navigator.of(context).pop(); // Go back to the previous screen
               },
               child: Text('OK'),
             ),
           ],
         ),
-      );
+      ).then((_) {
+        // This will be called after the dialog is closed
+        Navigator.of(context).pop(); // Go back to the previous screen
+      });
     }
   }
+
 
 }

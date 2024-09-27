@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'specialist.dart';
 import 'booking_page.dart';
+import 'main.dart';
 
 class SpecialistProfileScreen extends StatelessWidget {
   final Specialist specialist;
@@ -83,7 +84,8 @@ class SpecialistProfileScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _buildActionButton('Contact', () {
-                  // Implement contact functionality
+                  homeScreenKey.currentState?.navigateToMessagesWithContact(specialist);
+                  Navigator.of(context).pop();
                 }),
                 SizedBox(width: 10),
                 _buildActionButton('Book Now', () {
@@ -116,6 +118,8 @@ class SpecialistProfileScreen extends StatelessWidget {
       child: Text(label),
     );
   }
+
+
 
   Widget _buildContentGrid() {
     // Placeholder for content grid

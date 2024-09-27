@@ -3,6 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'specialist.dart';
 import 'specialist_profile_screen.dart';
+import 'messages_screen.dart';
+import 'service_specialists_screen.dart'; // Import the new screen
+
 
 void main() {
   runApp(MyApp());
@@ -22,8 +25,11 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+final GlobalKey<_HomeScreenState> homeScreenKey = GlobalKey<_HomeScreenState>();
 
 class HomeScreen extends StatefulWidget {
+  HomeScreen({Key? key}) : super(key: homeScreenKey);
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -40,6 +46,14 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+   void navigateToMessagesWithContact(Specialist specialist) {
+    setState(() {
+      _selectedIndex = 0; // Switch to the Messages tab
+    });
+
+    (_widgetOptions[0] as MessagesScreen).addNewContact(specialist);
   }
 
   @override
@@ -63,31 +77,17 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.event),
             label: 'Appointments',
           ),
-          
         ],
       ),
     );
   }
 }
 
-// Placeholder for Messages Screen
-class MessagesScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Messages'),
-        backgroundColor: Colors.blue, // Customize as needed
-      ),
-      body: Center(
-        child: Text(
-          'Messages Screen',
-          style: TextStyle(fontSize: 24),
-        ),
-      ),
-    );
-  }
+// Function to normalize DateTime to midnight
+DateTime normalizeDate(DateTime dateTime) {
+  return DateTime(dateTime.year, dateTime.month, dateTime.day);
 }
+
 
 // Placeholder for Appointments Screen
 class AppointmentsScreen extends StatelessWidget {
@@ -121,13 +121,11 @@ class SearchScreen extends StatelessWidget {
   }
 }
 
-
 // The original HomeScreen content moved to SearchScreen
 class SearchContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Retain the AppBar and other UI elements as before
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -191,21 +189,18 @@ class SearchContent extends StatelessWidget {
                         'assets/content/hairpost2.jpg',
                       ],
                       schedule: {
-                        // Today's date
-                        DateTime.now(): [
+                        // Today's date normalized to midnight
+                        normalizeDate(DateTime.now()): [
                           TimeSlot(time: TimeOfDay(hour: 9, minute: 0), isBooked: false),
                           TimeSlot(time: TimeOfDay(hour: 10, minute: 0), isBooked: true),
                           TimeSlot(time: TimeOfDay(hour: 11, minute: 0), isBooked: false),
-                          // Add more time slots
                         ],
-                        // Tomorrow's date
-                        DateTime.now().add(Duration(days: 1)): [
+                        // Tomorrow's date normalized to midnight
+                        normalizeDate(DateTime.now().add(Duration(days: 1))): [
                           TimeSlot(time: TimeOfDay(hour: 9, minute: 0), isBooked: false),
                           TimeSlot(time: TimeOfDay(hour: 10, minute: 0), isBooked: false),
                           TimeSlot(time: TimeOfDay(hour: 11, minute: 0), isBooked: true),
-                          // Add more time slots
                         ],
-                        // Add more dates and time slots as needed
                       },
                     ),
                   ),
@@ -224,21 +219,20 @@ class SearchContent extends StatelessWidget {
                       ],
                       rating: 4.5,
                       schedule: {
-                        // Today's date
-                        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day): [
+                        // Today's date normalized to midnight
+                        normalizeDate(DateTime.now()): [
                           TimeSlot(time: TimeOfDay(hour: 9, minute: 0), isBooked: false),
                           TimeSlot(time: TimeOfDay(hour: 10, minute: 0), isBooked: true),
                           TimeSlot(time: TimeOfDay(hour: 11, minute: 0), isBooked: false),
                         ],
                         // Tomorrow's date normalized to midnight
-                        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 1): [
+                        normalizeDate(DateTime.now().add(Duration(days: 1))): [
                           TimeSlot(time: TimeOfDay(hour: 9, minute: 0), isBooked: false),
                           TimeSlot(time: TimeOfDay(hour: 10, minute: 0), isBooked: false),
                           TimeSlot(time: TimeOfDay(hour: 11, minute: 0), isBooked: true),
                         ],
-                        // Add more dates and time slots as needed
                       },
-                  )
+                    ),
                   ),
                 ],
               ),
@@ -255,19 +249,12 @@ class SearchContent extends StatelessWidget {
                 mainAxisSpacing: 8,
                 crossAxisSpacing: 8,
                 children: [
-                  ServiceIcon(
-                      label: 'Haircut',
-                      iconPath: 'assets/icons/haircut.jpg'),
-                  ServiceIcon(
-                      label: 'Bike Repair',
-                      iconPath: 'assets/icons/bikerepair.jpg'),
+                  ServiceIcon(label: 'Haircut', iconPath: 'assets/icons/haircut.jpg'),
+                  ServiceIcon(label: 'Bike Repair', iconPath: 'assets/icons/bikerepair.jpg'),
                   ServiceIcon(label: 'Gym', iconPath: 'assets/icons/gym.jpg'),
-                  ServiceIcon(
-                      label: 'Nails', iconPath: 'assets/icons/nails.jpg'),
-                  ServiceIcon(
-                      label: 'Makeup', iconPath: 'assets/icons/makeup.jpg'),
-                  ServiceIcon(
-                      label: 'Plumber', iconPath: 'assets/icons/plumber.jpg'),
+                  ServiceIcon(label: 'Nails', iconPath: 'assets/icons/nails.jpg'),
+                  ServiceIcon(label: 'Makeup', iconPath: 'assets/icons/makeup.jpg'),
+                  ServiceIcon(label: 'Plumber', iconPath: 'assets/icons/plumber.jpg'),
                 ],
               ),
             ),
@@ -277,7 +264,6 @@ class SearchContent extends StatelessWidget {
     );
   }
 }
-
 
 class SpecialistCard extends StatelessWidget {
   final Specialist specialist;
@@ -357,6 +343,55 @@ class SpecialistCard extends StatelessWidget {
   }
 }
 
+final List<Specialist> allSpecialists = [
+  Specialist(
+    name: 'Alexa Brown',
+    specialization: 'Haircut',
+    industry: 'Beauty Salon',
+    distance: '1.27km',
+    workingHours: '10:00 AM - 22:00 PM',
+    imageUrl: 'assets/images/alexabrown.jpg',
+    bio: 'Passionate about helping businesses grow online.',
+    rating: 4.5,
+    contentUrls: ['assets/content/hairpost.jpg', 'assets/content/hairpost2.jpg'],
+    schedule: {
+      normalizeDate(DateTime.now()): [
+        TimeSlot(time: TimeOfDay(hour: 9, minute: 0), isBooked: false),
+        TimeSlot(time: TimeOfDay(hour: 10, minute: 0), isBooked: true),
+        TimeSlot(time: TimeOfDay(hour: 11, minute: 0), isBooked: false),
+      ],
+      normalizeDate(DateTime.now().add(Duration(days: 1))): [
+        TimeSlot(time: TimeOfDay(hour: 9, minute: 0), isBooked: false),
+        TimeSlot(time: TimeOfDay(hour: 10, minute: 0), isBooked: false),
+        TimeSlot(time: TimeOfDay(hour: 11, minute: 0), isBooked: true),
+      ],
+    },
+  ),
+  Specialist(
+    name: 'Jonathan Wayne',
+    specialization: 'Tattoo',
+    industry: 'Tattoo Art',
+    distance: '2.7km',
+    workingHours: '10:00 AM - 22:00 PM',
+    imageUrl: 'assets/images/jonathanwayne.jpg',
+    bio: 'Passionate about helping businesses grow online.',
+    contentUrls: ['assets/content/tattoopost.jpg', 'assets/content/tattoopost2.jpg'],
+    rating: 4.5,
+    schedule: {
+      normalizeDate(DateTime.now()): [
+        TimeSlot(time: TimeOfDay(hour: 9, minute: 0), isBooked: false),
+        TimeSlot(time: TimeOfDay(hour: 10, minute: 0), isBooked: true),
+        TimeSlot(time: TimeOfDay(hour: 11, minute: 0), isBooked: false),
+      ],
+      normalizeDate(DateTime.now().add(Duration(days: 1))): [
+        TimeSlot(time: TimeOfDay(hour: 9, minute: 0), isBooked: false),
+        TimeSlot(time: TimeOfDay(hour: 10, minute: 0), isBooked: false),
+        TimeSlot(time: TimeOfDay(hour: 11, minute: 0), isBooked: true),
+      ],
+    },
+  ),
+  // Add more specialists as needed
+];
 
 class ServiceIcon extends StatelessWidget {
   final String label;
@@ -371,35 +406,51 @@ class ServiceIcon extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       elevation: 1,
-      child: Padding(
-        padding: const EdgeInsets.all(
-            0.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ClipOval(
-              child: Image.asset(
-                iconPath,
-                height: 70,
-                width: 70,
-                fit: BoxFit.cover,
+      child: InkWell(
+        onTap: () {
+          // Filter specialists by the selected service label
+          List<Specialist> filteredSpecialists = allSpecialists
+              .where((specialist) => specialist.specialization.toLowerCase() == label.toLowerCase())
+              .toList();
+
+          // Navigate to the ServiceSpecialistsScreen
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ServiceSpecialistsScreen(
+                serviceName: label,
+                specialists: filteredSpecialists,
               ),
             ),
-            SizedBox(height: 10),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: const Color.fromARGB(255, 138, 138, 138),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(0.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ClipOval(
+                child: Image.asset(
+                  iconPath,
+                  height: 70,
+                  width: 70,
+                  fit: BoxFit.cover,
+                ),
               ),
-              textAlign: TextAlign.center,
-            ),
-          ],
+              SizedBox(height: 10),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: const Color.fromARGB(255, 138, 138, 138),
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
-
-
